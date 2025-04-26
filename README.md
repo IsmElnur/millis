@@ -1,2 +1,87 @@
-# millis
-IsmElnur CV
+# millis()
+## Цель
+Спроектировать информационную систему, состоящую из платы Arduino Uno R3, подключённой к датчику нажатия, который включает и отключает светодиод.
+
+## Задачи
+1. Собрать схему с использованием платы Arduino Uno R3, кнопки (датчика нажатия) и трёх светодиодов.
+2. Написать программный код.
+3. Проверить работоспособность программы и схемы.
+
+### Реализация проекта
+
+На рисунке 1 изображено начало процесса проектирования информационной системы. Проектирование осуществляется в среде моделирования электронных схем TinkerCAD (разработка компании Autodesk).
+
+![image](https://github.com/user-attachments/assets/92dc2954-b418-4313-bd49-6755de4afeb9)
+
+Начинаем моделирование, см. рисунок 2.
+
+![image](https://github.com/user-attachments/assets/f672bdd3-7981-416c-847a-5b38560556fd)
+
+Из рисунка 2 мы видим, что загорелся светодиод красного цвета, а два других светодиода зелёного и жёлтого цвета мигают с интервалами 200 и 1000 мс соответственно.
+
+Программный код для интервалов последних светодиодов представлен ниже:
+```CPP
+{
+  unsigned long currentMillis = millis(); // сохраняем текущее время
+  if (currentMillis - previousMillis1 >= period1) 
+  { // проверяем, прошло ли 1000 мс
+    previousMillis1 = currentMillis; // сохраняем последнее время, когда мигнул светодиод
+    if (ledState1 == LOW) 
+    {  // если светодиод выключен, включаем его, и наоборот
+      ledState1 = HIGH; // изменяем состояние светодиода для следующей итерации
+    } 
+    else 
+    {
+      ledState1 = LOW;
+    }
+    digitalWrite(led1, ledState1); // устанавливаем 1-й светодиод в состояние, определяемое переменной  ledState1 
+  }
+  
+  if (currentMillis - previousMillis2 >= period2) 
+  { // проверяем, прошло ли 200 мс
+    previousMillis2 = currentMillis; // сохраняем последнее время, когда мигнул светодиод
+    if (ledState2 == LOW) 
+    { // если светодиод выключен, включаем его, и наоборот
+      ledState2 = HIGH;
+    } 
+    else 
+    {
+      ledState2 = LOW;
+    }
+    digitalWrite(led2, ledState2); // устанавливаем 2-й светодиод в состояние, определяемое переменной ledState2
+  }
+```
+
+Если мы нажмём кнопку, то светодиод красного цвета выключится, а два остальных светодиода продолжают мигать с теми же интервалами, как было в первоначальном состоянии моделирования, см. рисунок 3.
+
+![image](https://github.com/user-attachments/assets/34b014d0-0fbd-450f-bb51-1b6a4996e20a)
+
+После того, как мы во второй раз нажмём кнопку, загорится красный светодиод, см. рисунок 4.
+
+![image](https://github.com/user-attachments/assets/6dfc9133-f5d1-4fa9-8090-9e4f2bab07ca)
+
+Программный код датчика нажатия, отвечающий за включение и отключение светодиода красного цвета, представлен ниже:
+```CPP
+if (buttonPushed = true) // проверяем, вызывалась ли функция обработки прерывания (ISR) 
+  {
+    if ((currentMillis - debounceMillis) > debouncePeriod && buttonPushed) // организация задержки в 20 мс для устранения эффекта дребезга контактов
+    {
+      debounceMillis = currentMillis; // сохраняем последнее время задержки отмены
+      if (digitalRead(pushButton) == LOW && lastState == HIGH) // изменяем состояние светодиода если кнопка была нажата
+      {
+        ledChange = ! ledChange;
+        digitalWrite(toggleLed, ledChange);  
+        lastState = LOW;
+      }
+      else if (digitalRead(pushButton) == HIGH && lastState == LOW)     
+      {
+        lastState = HIGH;
+      }
+      buttonPushed = false;
+    }
+  }
+```
+
+Ссылка на проект:
+
+https://www.tinkercad.com/things/9LEaQ6el5av-millis?sharecode=_0H5A5JltUbHdeiRagd95_n6oprdDHhMnPkGaPenbLE

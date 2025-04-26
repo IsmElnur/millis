@@ -43,7 +43,7 @@ void loop()
     {
       ledState1 = LOW;
     }
-    digitalWrite(led1, ledState1); // устанавливаем 1-й светодиод в состояние, определяемое переменной  ledState1 
+    digitalWrite(led1, ledState1); // устанавливаем 1-й светодиод в состояние, определяемое переменной ledState1 
   }
   
   if (currentMillis - previousMillis2 >= period2) 
